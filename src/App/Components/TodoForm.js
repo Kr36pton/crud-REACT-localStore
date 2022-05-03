@@ -35,6 +35,7 @@ function TodoForm() {
         value={newTodoValue}
         onChange={onChange}
         placeholder="Comprar pan"
+        required
       />
       <div className="TodoForm-buttonContainer">
         <button
