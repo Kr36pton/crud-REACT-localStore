@@ -8,7 +8,7 @@ function TodoItem(props) {
         className={`Icon Icon-check ${props.completed && 'Icon-check--active'}`}
         onClick={props.onComplete}
       >
-        √
+        <i class="fa-solid fa-face-grin-beam"></i>
       </span>
       <p className={`TodoItem-p ${props.completed && 'TodoItem-p--complete'}`}>
         {props.text}
@@ -17,7 +17,7 @@ function TodoItem(props) {
         className="Icon Icon-delete"
         onClick={props.onDelete}
       >
-        X
+        <i class="fa-solid fa-circle-xmark"></i>
       </span>
     </li>
   );

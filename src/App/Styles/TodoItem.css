@@ -26,7 +26,7 @@
   align-items: center;
   height: 48px;
   width: 48px;
-  font-size: 24px;
+  font-size: 34px;
   font-weight: bold;
   /* background-color: #CCC; */
 }
@@ -43,7 +43,9 @@
   position: absolute;
   top: -24px;
   right: 0;
+  font-size: 35px;
 }
 .Icon-delete:hover {
-  color: red;
+  color: #DF3636 
+  ;
 }
