@@ -1,6 +1,7 @@
 import React from 'react';
 import { TodoContext } from './TodoContext';
 import '../Styles/TodoForm.css';
+import Swal from 'sweetalert2';
 
 function TodoForm() {
   const [newTodoValue, setNewTodoValue] = React.useState('');
@@ -19,6 +20,12 @@ function TodoForm() {
     event.preventDefault();
     addTodo(newTodoValue);
     setOpenModal(false);
+
+    Swal.fire({
+      icon: 'success',
+      title: 'SE HA CREADO UN NUEVO DEBER'
+    })
+    
   };
 
   return (
