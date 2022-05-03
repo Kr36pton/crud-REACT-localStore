@@ -23,11 +23,11 @@ function TodoForm() {
 
   return (
     <form onSubmit={onSubmit}>
-      <label>Escribe tu nuevo TODO</label>
+      <label>ESCRIBE TU NUEVO DEBER</label>
       <textarea
         value={newTodoValue}
         onChange={onChange}
-        placeholder="Cortar la cebolla oara el almuerzo"
+        placeholder="Comprar pan"
       />
       <div className="TodoForm-buttonContainer">
         <button
