@@ -30,7 +30,7 @@ public class TodoControllers {
         return todoService.obtenerTodos();
     }
 
-    @PostMapping()
+    @PostMapping(path = "/add")
     public Todo guardarTodos(@RequestBody Todo todo) {
         return this.todoService.guardarTodos(todo);
     }
@@ -40,7 +40,7 @@ public class TodoControllers {
         return this.todoService.obtenerPorId(id);
     }
 
-    @PutMapping("/updatetodo/{id}")
+    @PutMapping(path = "/updatetodo/{id}")
     Todo replaceTodo(@RequestBody Todo newtodo, @PathVariable Long id) {
 
         return todoService.obtenerPorId(id)

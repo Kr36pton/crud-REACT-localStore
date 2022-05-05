@@ -1,74 +1,100 @@
-import React from 'react';
-import { useLocalStorage } from './useLocalStorage';
-
-const TodoContext = React.createContext();
-
-function TodoProvider(props) {
-  const {
-    item: todos,
-    saveItem: saveTodos,
-    loading,
-    error,
-  } = useLocalStorage('TODOS_V1', []);
-  const [searchValue, setSearchValue] = React.useState('');
-  const [openModal, setOpenModal] = React.useState(false);
-
-  const completedTodos = todos.filter(todo => !!todo.completed).length;
-  const totalTodos = todos.length;
-
-  let searchedTodos = [];
-
+import React, { useState, useEffect } from "react";
+const Store = React.createContext();
+// El endpoint
+const HOST_API = "http://localhost:8080";
+function TodoContext(props) {
+  const [state, setState] = useState([{}]);
+  const [searchValue, setSearchValue] = useState("");
+  let completados = 0;
+  //Revisa los Todo que esten completados
+  state.forEach((element) => {
+    if (element.completed === true) {
+      completados++;
+    }
+  });
+  //Asigna el total de completados
+  const completedTodos = completados;
+  completados = 0;
+  const totalTodos = state.length;
+  //Estado inicial del buscador
+  let searchedTodos = [{}];
+  //Busqueda de elementos en la lista
   if (!searchValue.length >= 1) {
-    searchedTodos = todos;
+    searchedTodos = state;
   } else {
-    searchedTodos = todos.filter(todo => {
+    searchedTodos = state?.filter((todo) => {
       const todoText = todo.text.toLowerCase();
       const searchText = searchValue.toLowerCase();
       return todoText.includes(searchText);
     });
   }
-
-  const addTodo = (text) => {
-    const newTodos = [...todos];
-    newTodos.push({
+  //Guarda un nuevo elemento
+  const saveTodos = (request) => {
+    fetch(HOST_API + "/todos/add", {
+      method: "POST",
+      body: JSON.stringify(request),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((response) => response.json());
+  };
+  //Agrega el request para guardar un elemento
+  const addTodo = (newTodo) => {
+    const newRequest = {
       completed: false,
-      text,
+      text: newTodo,
+    };
+    saveTodos(newRequest);
+  };
+  //Actualiza el estado del Todo a completado
+  const completeTodo = (todo) => {
+    const requestOptions = {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: todo.id,
+        completed: true,
+        text: todo.text,
+      }),
+    };
+    fetch(HOST_API + "/todos/updatetodo/" + todo.id, requestOptions).then(
+      (response) => response.json()
+    );
+  };
+  //Borra elementos de la lista
+  const deleteTodo = (identifier) => {
+    fetch(HOST_API + "/todos/eliminar-todos/" + identifier, {
+      method: "DELETE",
     });
-    saveTodos(newTodos);
   };
 
-  const completeTodo = (text) => {
-    const todoIndex = todos.findIndex(todo => todo.text === text);
-    const newTodos = [...todos];
-    newTodos[todoIndex].completed = true;
-    saveTodos(newTodos);
-  };
+  //Hook para listar los elementos
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch(HOST_API + "/todos");
+      const newData = await response.json();
+      setState(newData);
+    };
+      fetchData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    , [state.length, state]);
 
-  const deleteTodo = (text) => {
-    const todoIndex = todos.findIndex(todo => todo.text === text);
-    const newTodos = [...todos];
-    newTodos.splice(todoIndex, 1);
-    saveTodos(newTodos);
-  };
-  
   return (
-    <TodoContext.Provider value={{
-      loading,
-      error,
-      totalTodos,
-      completedTodos,
-      searchValue,
-      setSearchValue,
-      searchedTodos,
-      addTodo,
-      completeTodo,
-      deleteTodo,
-      openModal,
-      setOpenModal,
-    }}>
+    <Store.Provider
+      value={{
+        totalTodos,
+        completedTodos,
+        searchValue,
+        setSearchValue,
+        searchedTodos,
+        addTodo,
+        completeTodo,
+        deleteTodo,
+      }}
+    >
       {props.children}
-    </TodoContext.Provider>
+    </Store.Provider>
   );
 }
-
-export { TodoContext, TodoProvider };
+export { TodoContext, Store };
